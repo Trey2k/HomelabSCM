@@ -1,0 +1,46 @@
+{{ define "settings_ui" }}
+<form id="{{ .ID }}">
+</form>
+{{ end }}
+
+{{ define "text_input" }}
+<div class="setting">
+    <label for="{{ .ID }}">Repo Storage Path</label>
+    <input type="text" id="{{ .ID }}" value="{{ .DefaultValue }}" />
+</div>
+{{ end }}
+
+{{ define "number_input" }}
+<div class="setting">
+    <label for="{{ .ID }}">Postgres Port</label>
+    <input type="number" id="{{ .ID }}" value="{{ .DefaultValue }}" />
+</div>
+{{ end }}
+
+{{ define "password_input" }}
+<div class="setting">
+    <label for="{{ .ID }}">Postgres Password</label>
+    <input type="password" id="{{ .ID }}" value="{{ .DefaultValue }}" />
+</div>
+{{ end }}
+
+{{ define "setting_list_item" }}
+<div class="setting-list-item">
+    <input type="text" value="{{ .Value }}" />
+    <a class="button" id="remove{{ .ID }}_{{ .Num }}">Remove</a>
+</div>
+{{ end }}
+
+{{ define "str_array_input" }}
+<div class="setting" id="{{ .ID }}">
+    <span class="label">{{ .Label }}</span>
+
+    <a class="button" id="add{{ .ID }}">Add</a>
+</div>
+{{ end }}
+
+{{ define "button" }}
+<div class="control">
+    <a class="button" id="{{ .ID }}">{{ .Label }}</a>
+</div>
+{{ end }}

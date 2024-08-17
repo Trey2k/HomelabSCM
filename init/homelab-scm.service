@@ -1,0 +1,15 @@
+[Unit]
+Description=HomelabSCM
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=git
+Group=git
+Restart=on-failure
+RestartSec=30
+WorkingDirectory=/var/opt/homelab-scm/
+ExecStart=/var/opt/homelab-scm/bin/homelab-scm
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if ! id -u git > /dev/null 2>&1; then
+    adduser --system --shell $(which git-shell) --gecos 'Git user controlled by HomeLabSCM' --group --disabled-password --home /var/opt/homelab-scm git
+else
+    usermod -s $(which git-shell) git
+    usermod -d /var/opt/homelab-scm git
+fi
+
+chown -R git:git /var/opt/homelab-scm
+chmod -R 755 /var/opt/homelab-scm
+setcap CAP_NET_BIND_SERVICE=+eip /var/opt/homelab-scm/bin/homelab-scm
+
+systemctl daemon-reload
+
+if ! systemctl is-enabled homelab-scm > /dev/null 2>&1; then
+    systemctl enable homelab-scm
+fi
+
+if ! systemctl is-active homelab-scm > /dev/null 2>&1; then
+    systemctl start homelab-scm
+else
+    systemctl restart homelab-scm
+fi

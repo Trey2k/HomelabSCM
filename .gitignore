@@ -1,0 +1,6 @@
+build/tmp/*
+build/bin/*
+internal/web/static/wasm/*
+*.deb
+*.wasm
+.vscode/*
