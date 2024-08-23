@@ -1,3 +1,28 @@
 # github.com/gorilla/mux v1.8.1
 ## explicit; go 1.20
 github.com/gorilla/mux
+# github.com/vugu/vgrouter v0.0.0-20200725205318-eeb478c42e5d
+## explicit; go 1.14
+github.com/vugu/vgrouter
+# github.com/vugu/vjson v0.0.0-20200505061711-f9cbed27d3d9
+## explicit
+github.com/vugu/vjson
+# github.com/vugu/vugu v0.4.0
+## explicit; go 1.22.3
+github.com/vugu/vugu
+github.com/vugu/vugu/domrender
+github.com/vugu/vugu/js
+github.com/vugu/vugu/vgform
+# github.com/vugu/xxhash v0.0.0-20191111030615-ed24d0179019
+## explicit
+github.com/vugu/xxhash
+# golang.org/x/text v0.14.0
+## explicit; go 1.18
+golang.org/x/text/cases
+golang.org/x/text/internal
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
+golang.org/x/text/internal/tag
+golang.org/x/text/language
+golang.org/x/text/transform
+golang.org/x/text/unicode/norm

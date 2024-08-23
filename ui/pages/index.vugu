@@ -1,0 +1,15 @@
+<div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+    <span class="col-md-4" vg-content="c.Message"></span>
+    <form class="col-md-4" @submit='c.Submit(event)'>
+        <div class="form-group">
+            <label for="message">Message</label>
+            <vgform:Input type="text" class="form-control"
+            :Value='vgform.StringPtr{&c.Message}'
+            ></vgform:Input>
+        </div>
+        <button type="submit" class="btn btn-primary">Change</button>
+    </form>
+</div>
+<script type="application/x-go">
+import "github.com/vugu/vugu/vgform"
+</script>

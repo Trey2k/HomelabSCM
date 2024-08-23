@@ -1,0 +1,27 @@
+FROM debian:bookworm
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    openssh-server \
+    git \
+    postgresql \
+    libcap2-bin
+
+RUN mkdir /var/opt/homelab-scm/git-data -p
+RUN mkdir /var/opt/homelab-scm/configs -p
+COPY deployments/homelab-scm /var/opt/homelab-scm/bin/homelab-scm
+COPY deployments/homelab-scm-shell /var/opt/homelab-scm/bin/homelab-scm-shell
+RUN chmod +x /var/opt/homelab-scm/bin/homelab-scm
+RUN chmod +x /var/opt/homelab-scm/bin/homelab-scm-shell
+RUN mkdir -p /run/sshd
+
+RUN useradd -m -d /var/opt/homelab-scm -s $(which git-shell) git
+RUN chown -R git:git /var/opt/homelab-scm/
+RUN chown git:git /var/opt/homelab-scm/bin/homelab-scm
+RUN chown git:git /var/opt/homelab-scm/bin/homelab-scm-shell
+RUN setcap CAP_NET_BIND_SERVICE=+eip /var/opt/homelab-scm/bin/homelab-scm
+
+
+WORKDIR /var/opt/homelab-scm
+
+ENTRYPOINT /usr/sbin/sshd -D & su -s /bin/sh git -c "/var/opt/homelab-scm/bin/homelab-scm"

@@ -1,0 +1,9 @@
+<div>
+    <main role="main" class="container">
+        <components:TopNav></components:TopNav>
+        <vg-comp expr="c.Body"/>
+    </main>
+</div>
+<script type="application/x-go">
+import "homelabscm.com/scm/ui/components"
+</script>

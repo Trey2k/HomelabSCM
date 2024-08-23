@@ -1,0 +1,9 @@
+<div>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand btn">
+                <strong vg-content='c.Message'></strong>
+            </a>
+        </div>
+    </nav>
+</div>

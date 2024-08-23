@@ -3,7 +3,7 @@ Version: @@VERSION@@
 Maintainer: Trey M
 Architecture: all
 Description: SCM for your homelab
-Depends: git, openssh-server
+Depends: git, openssh-server, libcap2-bin
 Recommends: postgresql
 Vcs-Browser: https://homelabscm.com/scm.git
 Vcs-Git: https://homelabscm.com/scm.git -b master

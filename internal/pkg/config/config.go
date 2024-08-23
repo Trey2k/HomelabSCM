@@ -2,18 +2,10 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
+	"path"
 )
-
-var (
-	BasePath = "/var/opt/homelab-scm"
-)
-
-func init() {
-	if os.Getenv("HOMELAB_SCM_BASE_PATH") != "" {
-		BasePath = os.Getenv("HOMELAB_SCM_BASE_PATH")
-	}
-}
 
 // Reads a JSON config file into the provided struct.
 // If the file does not exist, it will be created with the provided config.
@@ -36,13 +28,22 @@ func ReadConfig(path string, config any) error {
 }
 
 // Writes the provided struct to a JSON file.
-func WriteConfig(path string, config any) error {
+func WriteConfig(config_path string, config any) error {
+	folder := path.Dir(config_path)
+	if _, err := os.Stat(folder); os.IsNotExist(err) {
+		fmt.Println("Creating folder", folder)
+		err := os.MkdirAll(folder, 0755)
+		if err != nil {
+			return err
+		}
+	}
+
 	jsonData, err := json.MarshalIndent(config, "", "    ")
 	if err != nil {
 		return err
 	}
 
-	err = os.WriteFile(path, jsonData, 0644)
+	err = os.WriteFile(config_path, jsonData, 0644)
 	if err != nil {
 		return err
 	}
