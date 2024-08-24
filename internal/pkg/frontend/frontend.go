@@ -5,9 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
-	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -44,45 +42,14 @@ func (h *FrontendHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		cmd.Dir = h.BasePath
 		b, err := cmd.CombinedOutput()
-		log.Printf("go run build-frontend.go - err: %v\n%s", err, b)
+		log.Printf("make homelab-web-client - err: %v\n%s", err, b)
 		if err != nil {
 			w.Header().Set("Content-Type", "text/plain")
 			w.WriteHeader(500)
-			fmt.Fprintf(w, "build-frontend.go error: %v\n%s", err, b)
+			fmt.Fprintf(w, "make homelab-web-client - err: %v\n%s", err, b)
 			return false
 		}
 		return true
-	}
-	ext := path.Ext(r.URL.Path)
-
-	if ext != "" {
-		f, err := staticDir.Open(r.URL.Path)
-		if os.IsNotExist(err) {
-			return
-		} else if err != nil {
-			http.Error(w, fmt.Sprintf("File error: %v", err), 500)
-			return
-		}
-		defer f.Close()
-
-		st, err := f.Stat()
-		if err != nil {
-			http.Error(w, fmt.Sprintf("File stat error: %v", err), 500)
-			return
-		}
-		_ = st
-
-		// manually handle some mime types
-		switch ext {
-		case ".wasm":
-			w.Header().Set("Content-Type", "application/wasm")
-
-		case ".css":
-			w.Header().Set("Content-Type", "text/css")
-
-		}
-		http.ServeContent(w, r, r.URL.Path, st.ModTime(), f)
-		return
 	}
 	
 	if h.DevMode && !buildFrontend() {
@@ -103,9 +70,9 @@ var indexHTML = `<!doctype html>
 <html>
 <head>
 <meta charset="utf-8"/>
-    <link rel="stylesheet" href="/css/main.css">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/css/main.css">
+	<link type="text/css" rel="stylesheet" href="static/css/materialize.min.css"  media="screen,projection"/>
+   	<link rel="stylesheet" href="static/css/fontawesome.min.css">
 <!-- styles -->
 </head>
 <body>
@@ -113,7 +80,8 @@ var indexHTML = `<!doctype html>
 <img style="position: absolute; top: 50%; left: 50%;" src="https://cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif">
 </div>
 <script src="https://cdn.jsdelivr.net/npm/text-encoding@0.7.0/lib/encoding.min.js"></script> <!-- MS Edge polyfill -->
-<script src="/js/wasm_exec.js"></script>
+<script src="static/js/wasm_exec.js"></script>
+<script type="text/javascript" src="static/js/materialize.min.js"></script>
 <!-- scripts -->
 <script>
 var wasmSupported = (typeof WebAssembly === "object");
@@ -124,7 +92,7 @@ if (wasmSupported) {
 			return await WebAssembly.instantiate(source, importObject);
 		};
 	}
-	var mainWasmReq = fetch("/wasm/homelab-web-client.wasm").then(function(res) {
+	var mainWasmReq = fetch("static/wasm/homelab-web-client.wasm").then(function(res) {
 		if (res.ok) {
 			const go = new Go();
 			WebAssembly.instantiateStreaming(res, go.importObject).then((result) => {

@@ -7,7 +7,8 @@ import (
 	"flag"
 	"fmt"
 
-	"homelabscm.com/scm/wasm/homelab-web-client/setup"
+	"homelabscm.com/scm/internal/pkg/wasm/api"
+	"homelabscm.com/scm/internal/pkg/wasm/ui"
 
 	"github.com/vugu/vugu"
 	"github.com/vugu/vugu/domrender"
@@ -32,11 +33,13 @@ func main() {
 		panic(err)
 	}
 
-	rootBuilder := setup.VuguSetup(buildEnv, renderer.EventEnv())
+	api_client := api.NewAPIClient("/api/v1")
+	ui_manager := ui.NewUIManager(api_client)
+
+	rootBuilder := ui_manager.SetupVugu(buildEnv, renderer.EventEnv())
 	//rootBuilder := &comps.Root{}
 
 	for ok := true; ok; ok = renderer.EventWait() {
-
 		buildResults := buildEnv.RunBuild(rootBuilder)
 
 		err = renderer.Render(buildResults)
