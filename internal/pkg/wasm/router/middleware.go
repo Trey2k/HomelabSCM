@@ -1,24 +1,25 @@
-package ui
+package router
 
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/vugu/vgrouter"
 )
 
-func (ui *UIManager) routInterceptor(handler vgrouter.RouteHandlerFunc) vgrouter.RouteHandlerFunc {
+func (r *Router) routInterceptor(handler vgrouter.RouteHandlerFunc) vgrouter.RouteHandlerFunc {
 	return func(rm *vgrouter.RouteMatch) {
-		if rm.Path != "/install" && !ui.status.Installed {
+		if !strings.HasPrefix(rm.Path, "/install") && !r.status.Installed {
 			fmt.Println("Checking status")
-			status, err := ui.apiClient.Status()
+			status, err := r.apiClient.Status()
 			if err != nil {
 				log.Fatalf("failed to get status: %v", err)
 				return
 			}
 
 			if !status.Installed {
-				ui.router.Navigate("/install", nil)
+				r.router.Navigate("/install", nil)
 				return
 			}
 		}

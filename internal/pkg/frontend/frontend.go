@@ -27,6 +27,8 @@ func NewFrontendHandler(StaticFS fs.FS) *FrontendHandler {
 	}
 }
 
+var alreadyBuilding = false
+
 func (h *FrontendHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var staticDir http.FileSystem
 	if h.DevMode {
@@ -37,6 +39,11 @@ func (h *FrontendHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Printf("FrontendHandler starting with dist dir: %v", staticDir)
 
 	buildFrontend := func() (ok bool) {
+		if alreadyBuilding {
+			return
+		}
+
+		alreadyBuilding = true
 
 		cmd := exec.Command("make", "homelab-web-client")
 
@@ -49,6 +56,9 @@ func (h *FrontendHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "make homelab-web-client - err: %v\n%s", err, b)
 			return false
 		}
+
+		alreadyBuilding = false
+
 		return true
 	}
 	
@@ -70,9 +80,9 @@ var indexHTML = `<!doctype html>
 <html>
 <head>
 <meta charset="utf-8"/>
-    <link rel="stylesheet" href="static/css/main.css">
-	<link type="text/css" rel="stylesheet" href="static/css/materialize.min.css"  media="screen,projection"/>
-   	<link rel="stylesheet" href="static/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+	<link type="text/css" rel="stylesheet" href="/static/css/materialize.min.css"  media="screen,projection"/>
+   	<link rel="stylesheet" href="/static/css/fontawesome.min.css">
 <!-- styles -->
 </head>
 <body>
@@ -80,8 +90,8 @@ var indexHTML = `<!doctype html>
 <img style="position: absolute; top: 50%; left: 50%;" src="https://cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif">
 </div>
 <script src="https://cdn.jsdelivr.net/npm/text-encoding@0.7.0/lib/encoding.min.js"></script> <!-- MS Edge polyfill -->
-<script src="static/js/wasm_exec.js"></script>
-<script type="text/javascript" src="static/js/materialize.min.js"></script>
+<script src="/static/js/wasm_exec.js"></script>
+<script type="text/javascript" src="/static/js/materialize.min.js"></script>
 <!-- scripts -->
 <script>
 var wasmSupported = (typeof WebAssembly === "object");
@@ -92,7 +102,7 @@ if (wasmSupported) {
 			return await WebAssembly.instantiate(source, importObject);
 		};
 	}
-	var mainWasmReq = fetch("static/wasm/homelab-web-client.wasm").then(function(res) {
+	var mainWasmReq = fetch("/static/wasm/homelab-web-client.wasm").then(function(res) {
 		if (res.ok) {
 			const go = new Go();
 			WebAssembly.instantiateStreaming(res, go.importObject).then((result) => {
